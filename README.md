@@ -4,6 +4,7 @@ This gem allows you to grab posts and comments from Reddit without any auth.
 It concurrently grabs multiple subbreddits at a time to utilize your machine as much as possible and increase throughput.
 
 No setup and a clean interface makes this gem ideal when you just want to process public reddit data.
+
 Zero dependencies.
 
 The [Redd gem](https://github.com/avinashbot/redd) seems to be abandoned so I created this gem to meet my needs.
@@ -28,29 +29,29 @@ Or install it yourself as:
 ```ruby
 results = RedditGet::Subreddit.collect_all %w[gaming videos movies funny]
 results # will hold RedditGet::Data which acts like a hash
-results['gaming'].each do |post|
+results.gaming.each do |post|
   puts post['title']
 end
-results.gaming
 ```
 
 ### You want to grab one subreddit
 ```ruby
 result = RedditGet::Subreddit.collect('gaming')
 
-results.gaming.each do |post|
+result.gaming.each do |post|
   puts post.title # all gaming posts titles
-end 
-results['gaming'] # works too!
+end
+result['gaming'] # works too!
 ```
 
-## You want to grab comments for each post
+### You want to grab comments as well
+Note: This grabs X subreddits M posts and N comments per post. So it is making X*M*N HTTP requests.
 ```ruby
 results = RedditGet::Subreddit.collect_all %w[gaming videos movies funny], with_comments: true
 results.gaming.each do |post|
   puts post.title
   post.comments.each do |comment|
-    puts comment.body
+    puts comment.body rescue nil
   end
 end
 
