@@ -45,7 +45,7 @@ result['gaming'] # works too!
 ```
 
 ### You want to grab comments as well
-Note: This grabs X subreddits M posts and N comments per post. So it is making X*M*N HTTP requests.
+Note: This grabs X subreddits M posts and N comments per post. So it is making X\*M\*N HTTP requests.
 ```ruby
 results = RedditGet::Subreddit.collect_all %w[gaming videos movies funny], with_comments: true
 results.gaming.each do |post|
