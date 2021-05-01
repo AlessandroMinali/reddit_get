@@ -58,7 +58,7 @@ module RedditGet
     def self.collect_all(subreddits, with_comments: false)
       raise TypeError, 'Must pass an array of subreddits' unless subreddits.is_a?(Array)
 
-      results = Hash[subreddits.zip([])]
+      results = subreddits.zip([]).to_h
       subreddits.uniq.each do |subreddit|
         grab_posts(results, subreddit, with_comments: with_comments)
       end
