@@ -15,19 +15,6 @@ module RedditGet
       @data = data
     end
 
-    def objectify(data)
-      data.transform_values! do |v|
-        case v
-        when Hash
-          Data.new(v)
-        when Array
-          v.map { |i| Data.new(i) }
-        else
-          v
-        end
-      end
-    end
-
     def [](key)
       @data.fetch(key)
     end
