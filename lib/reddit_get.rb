@@ -34,7 +34,7 @@ module RedditGet
     end
 
     def respond_to_missing?(method, include_private = false)
-      @data.key?(method_name.to_s) || super
+      @data.key?(method.to_s) || super
     end
   end
 
