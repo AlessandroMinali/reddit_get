@@ -33,8 +33,8 @@ module RedditGet
       end
     end
 
-    def respond_to_missing?(method)
-      @data.key?(method_name.to_s) || super
+    def respond_to_missing?(method, include_private = false)
+      @data.key?(method.to_s) || super
     end
   end
 
@@ -42,19 +42,19 @@ module RedditGet
   class Subreddit
     BASE_URL = 'https://old.reddit.com'
 
-    def self.collect_all(subreddits, with_comments: false)
+    def self.collect_all(subreddits, with_comments: false, limit: 25)
       raise TypeError, 'Must pass an array of subreddits' unless subreddits.is_a?(Array)
 
       results = subreddits.zip([]).to_h
       subreddits.uniq.each do |subreddit|
-        grab_posts(results, subreddit, with_comments: with_comments)
+        grab_posts(results, subreddit, with_comments: with_comments, limit: limit)
       end
       scheduler_run
       Data.new(results)
     end
 
-    def self.collect(subreddit, with_comments: false)
-      collect_all([subreddit], with_comments: with_comments)
+    def self.collect(subreddit, with_comments: false, limit: 25)
+      collect_all([subreddit], with_comments: with_comments, limit: limit)
     end
 
     class << self
@@ -66,9 +66,9 @@ module RedditGet
         scheduler.run
       end
 
-      def grab_posts(results, subreddit, with_comments:)
+      def grab_posts(results, subreddit, with_comments:, limit:)
         Fiber.new do
-          results[subreddit] = get_reddit_posts(subreddit).map! do |post|
+          results[subreddit] = get_reddit_posts(subreddit, limit: limit).map! do |post|
             grab_comments(post) if with_comments
             post['data']
           end
@@ -84,8 +84,8 @@ module RedditGet
         end.resume
       end
 
-      def get_reddit_posts(subreddit)
-        get_json(URI("#{BASE_URL}/r/#{subreddit}.json")).dig('data', 'children')
+      def get_reddit_posts(subreddit, limit: 25)
+        get_json(URI("#{BASE_URL}/r/#{subreddit}.json?limit=#{limit}")).dig('data', 'children')
       end
 
       def get_reddit_comments(url)
