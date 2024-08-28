@@ -1,6 +1,0 @@
-AllCops:
-  NewCops: enable
-  Exclude:
-    - lib/scheduler.rb
-
-require: rubocop-performance
